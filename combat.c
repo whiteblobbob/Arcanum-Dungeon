@@ -9,7 +9,7 @@ int CRIT_CHANCE = 7;
 
 int player_stats[] = {
     10, // max hp
-    2, // atk
+    3, // atk
     2, // def
     10 // mana
 };
@@ -21,7 +21,7 @@ int enemy_stats[] = {
     10 // mana
 };
 
-int damage(int atk, int def, int attacker, char *combat_log[2][100]) {
+int damage(int atk, int def, int attacker, char combat_log[2][100]) {
     // crit chance
     int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
 
@@ -68,7 +68,7 @@ int start_combat() {
         scanf("%d", &action);
 
         if (action == 1) {
-            int dmg = damage(player_stats[1], enemy_stats[2], 0, &combat_log);
+            int dmg = damage(player_stats[1], enemy_stats[2], 0, combat_log);
             enemy_hp -= dmg;
         } else {
             printf("Invalid action!\n\n");
@@ -81,7 +81,7 @@ int start_combat() {
         }
 
         // enemy action
-        int dmg = damage(enemy_stats[1], player_stats[2], 1, &combat_log);
+        int dmg = damage(enemy_stats[1], player_stats[2], 1, combat_log);
         player_hp -= dmg;
     }
 
