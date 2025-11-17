@@ -4,6 +4,20 @@
 #include "combat.h"
 #include "utils.h"
 
+
+// Color Variable
+const char *purple = "\033[0;35m";
+const char *white = "\033[0;37m";
+const char *aqua = "\033[0;36m";
+const char *blue = "\033[0;34m";
+const char *green = "\033[0;32m";
+const char *yellow = "\033[0;33m";
+const char *red = "\e[1;31m";
+const char *black = "\033[0;30m";
+
+// Reset to default color
+const char *reset = "\033[0m";
+
 // CONSTANTS
 int CRIT_CHANCE = 7;
 
@@ -54,26 +68,57 @@ int start_combat() {
     int enemy_mana = enemy_stats[3];
 
     while (player_hp > 0 && enemy_hp > 0) {
-        clear_screen();
 
-        // player action
-        int action;
+        //disabled due UI needs
+        
+        // clear_screen();
+
+    int action;
+    do{
+    printf("%s====================================================================%s\n", purple, reset);
+    printf("%s|                                                                  |%s\n", purple, reset);
+    printf("%s|%s                               %sAction%s                             |%s\n",purple, reset, aqua, purple, reset);
+    printf("%s|                                                                  |%s\n", purple, reset);
+    printf("%s====================================================================%s\n", purple, reset);
+    printf("%s|%s", purple, reset);
+    printf("                 1. %sAttack                %s2. %sDefend%s               |%s\n", red, reset, yellow, purple, reset);
+    printf("%s====================================================================%s\n", purple, reset);
+    printf("%s|%s", purple, reset);
+    printf("                 3. %sSkill                 %s4. %sOther%s                |%s\n", blue, reset, green, purple, reset);
+    printf("%s====================================================================%s\n", purple, reset);
+
 
         printf("%s%s", combat_log[0], combat_log[1]);
-        printf("PLAYER  %d HP    %d ATK    %d MANA    %d DEF\n", player_hp, player_stats[1], player_mana, player_stats[2]);
-        printf("ENEMY   %d HP    %d ATK    %d MANA    %d DEF\n\n", enemy_hp, enemy_stats[1], enemy_mana, enemy_stats[2]);
-        printf("1. Attack\n");
-        printf("What would you like to do?\nAction: ");
+        
+        printf("Hero  %d HP    %d ATK    %d MANA    %d DEF\n", player_hp, player_stats[1], player_mana, player_stats[2]);
+        printf("Enemy   %d HP    %d ATK    %d MANA    %d DEF\n\n", enemy_hp, enemy_stats[1], enemy_mana, enemy_stats[2]);
 
+        printf("I Will : ");
         scanf("%d", &action);
 
-        if (action == 1) {
-            int dmg = damage(player_stats[1], enemy_stats[2], 0, combat_log);
-            enemy_hp -= dmg;
-        } else {
-            printf("Invalid action!\n\n");
-            continue;
+        if (action == 1)
+        {   
+            printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
+
+                int dmg = damage(player_stats[1], enemy_stats[2], 0, &combat_log);
+                enemy_hp -= dmg;
+            
+        }else if (action == 2)
+        {
+            printf("%sYou are guarding their attack, defense up! %s\n", yellow, reset);
+
+        }else if (action == 3)
+        {   
+            printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
+
+        }else if (action == 4){
+            printf("%sIs there any strategy would you like?%s");
         }
+        else{
+            printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+        };
+
+        } while (action < 1 || action > 4);
 
         // apakah musuh masih hidup
         if (enemy_hp <= 0) {
