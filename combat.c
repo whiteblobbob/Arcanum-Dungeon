@@ -111,6 +111,28 @@ int start_combat() {
         {   
             printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
 
+            printf("1. %sRegen %s(Cost 3 mana) %s- %sHeals 2 HP%s\n", green, blue, reset, green, reset);
+            
+            int skill;
+            do{
+            printf("I Will use : ");
+            scanf("%d", &skill);
+
+            if (skill == 1)
+            {
+                player_hp += 2;
+                player_mana -= 3;
+                if (player_hp > player_stats[0]) {
+                    player_hp = player_stats[0];
+                    printf("%sYour HP is already full!%s\n", yellow, reset);
+
+                }else{
+                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+            }
+        }
+
+            }while (skill < 1 || skill > 1);
+            
         }else if (action == 4){
             printf("%sIs there any strategy would you like?%s");
         }
@@ -133,8 +155,8 @@ int start_combat() {
     clear_screen();
 
     if (player_hp <= 0) {
-        printf("YOU LOST!");
+        printf("You have fallen...\n");
     } else if (enemy_hp <= 0) {
-        printf("YOU WON! (+2 EXP)");    
+        printf("Hero!, Great work! (Exp +2)\n");    
     }
 }
