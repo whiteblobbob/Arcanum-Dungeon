@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <unistd.h>
+#ifdef _WIN32
+#include <windows.h>
+#define sleep(x) Sleep(1000 * (x))   // Windows uses Sleep(milliseconds)
+#else
+#include <unistd.h>                  // Linux/Mac
+#endif
+#include "combat.h"
+#include "utils.h"
 
 
 
@@ -8,7 +15,6 @@ int main() {
 
     // UI Select Variable
     int menu;
-    int battle;
 
 
     // Color Variable
@@ -42,7 +48,7 @@ int main() {
 
     do
     {
-        printf("Menu Selection : ");
+    printf("Menu Selection : ");
     scanf("%d", &menu);
 
     
@@ -72,57 +78,13 @@ int main() {
     // Battle UI Code
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
     sleep(2);
-    do
-    {
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|                                                                  |%s\n", purple, reset);
-    printf("%s|%s                               %sAction%s                             |%s\n",purple, reset, aqua, purple, reset);
-    printf("%s|                                                                  |%s\n", purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|%s", purple, reset);
-    printf("                 1. %sAttack                %s2. %sDefend%s               |%s\n", red, reset, yellow, purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|%s", purple, reset);
-    printf("                 2. %sSkill                 %s4. %sOther%s                |%s\n", blue, reset, green, purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-
-
-        printf("Hero\n");
-        printf("Hp : 10                 Mana : 10\n");
-
-        printf("I Will : ");
-        scanf("%d", &battle);
-
-         if (battle == 1)
-    {   
-        printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
-        
-    }else if (battle == 2)
-    {
-        printf("%sYou are guarding their attack, defense up! %s\n", yellow, reset);
-
-    }else if (battle == 3)
-    {   
-        printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
-
-    }else if (battle == 4){
-
-        printf("%sIs there any strategy would you like?%s");
-    }
-    else{
-        printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
-    };
-
-    } while (battle < 1 || battle > 4);
+    start_combat();
     // End Of Battle UI Code
 
     // Checkpoint UI
 
 
-        printf("This is checkpoint UI");
-
-    
-
+    printf("This is checkpoint UI");
     
 
     // End of Checkpoint UI
