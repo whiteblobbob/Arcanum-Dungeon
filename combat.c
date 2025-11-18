@@ -23,14 +23,14 @@ int CRIT_CHANCE = 7;
 
 int player_stats[] = {
     10, // max hp
-    3, // atk
+    4, // atk
     2, // def
     10 // mana
 };
 
 int enemy_stats[] = {
     10, // max hp
-    2, // atk
+    4, // atk
     2, // def
     10 // mana
 };
@@ -102,16 +102,19 @@ int start_combat() {
 
                 int dmg = damage(player_stats[1], enemy_stats[2], 0, &combat_log);
                 enemy_hp -= dmg;
+                sleep(2);
             
         }else if (action == 2)
         {
             printf("%sYou are guarding their attack, defense up! %s\n", yellow, reset);
+            player_stats[2] += 2;
+            sleep(2);
 
         }else if (action == 3)
         {   
             printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
 
-            printf("1. %sRegen %s(Cost 3 mana) %s- %sHeals 2 HP%s\n", green, blue, reset, green, reset);
+            printf("1. %sRegen %s(Cost 3 mana) %s- %sHeals 2 HP%s\n", green, aqua, reset, green, reset);
             
             int skill;
             do{
@@ -120,21 +123,69 @@ int start_combat() {
 
             if (skill == 1)
             {
+                if (player_mana < 3)
+                {
+                    printf("%sYou tried to cast the healing but, you do not have enough Mana!%s\n", red, reset);
+                    sleep(2);
+                    continue;
+                }
+
+                //healing function
                 player_hp += 2;
                 player_mana -= 3;
-                if (player_hp > player_stats[0]) {
-                    player_hp = player_stats[0];
-                    printf("%sYour HP is already full!%s\n", yellow, reset);
 
-                }else{
-                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+                // check overheal and heal log
+            if (player_hp == player_stats[0] + 1) {
+                printf("%sYou regain 1 hp%s\n", green, reset);
+                sleep(2);
             }
+            else if (player_hp > player_stats[0]) {
+                player_hp = player_stats[0];
+                printf("%sYour HP is already full!%s\n", yellow, reset);
+                sleep(2);
+            }
+            else {
+                printf("%sYour Regain 2 HP%s\n", green, reset);
+                sleep(2);
+            }
+
+        }else{
+                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
         }
 
             }while (skill < 1 || skill > 1);
             
         }else if (action == 4){
-            printf("%sIs there any strategy would you like?%s");
+            printf("%sIs there any strategy would you like?\n%s", yellow, reset);
+            printf("1. %sFocus %s - %s Restore 2 Mana%s\n",aqua, reset, aqua, reset);
+
+            int other;
+            do{
+            printf("Let's : ");
+            scanf("%d", &other);
+
+            if (other == 1)
+            {
+                player_mana += 3;
+             if (player_mana == player_stats[0] + 1) {
+                printf("%sYou regain 1 mana%s\n", aqua, reset);
+                sleep(2);
+            }
+            else if (player_mana > player_stats[0]) {
+                player_mana = player_stats[0];
+                printf("%sYour Mana is already full!%s\n", yellow, reset);
+                sleep(2);
+            }
+            else {
+                printf("%sYour Regain 2 Mana%s\n", aqua, reset);
+                sleep(2);
+            }
+        }else{
+                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+        }
+
+            }while (other < 1 || other > 1);
+
         }
         else{
             printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
@@ -144,6 +195,8 @@ int start_combat() {
 
         // apakah musuh masih hidup
         if (enemy_hp <= 0) {
+            printf("%sThe enemy has been defeated!%s\n", yellow, reset);
+            sleep(1);
             break;
         }
 
@@ -155,8 +208,10 @@ int start_combat() {
     clear_screen();
 
     if (player_hp <= 0) {
-        printf("You have fallen...\n");
+        printf("%sYou have fallen...%s\n", red, reset);
+        sleep(2);
     } else if (enemy_hp <= 0) {
-        printf("Hero!, Great work! (Exp +2)\n");    
+        printf("%sHero!, Great work! (Exp +2)%s\n", green, reset);    
+        sleep(2);
     }
 }
