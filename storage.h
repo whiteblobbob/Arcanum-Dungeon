@@ -1,7 +1,9 @@
 #ifndef STORAGE_H
-#define STORAGE_h
+#define STORAGE_H
 
+#include "shared.h"
 
-void save_file();
+struct player load_data();
+void save_data(struct player save);
 
 #endif

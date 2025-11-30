@@ -1,2 +1,2 @@
-gcc combat.c main.c utils.c -o game
+gcc combat.c main.c utils.c storage.c -o game
 game
