@@ -3,6 +3,7 @@
 #include <time.h>
 #include "combat.h"
 #include "utils.h"
+#include "sound.h"
 
 
 // Color Variable
@@ -95,6 +96,7 @@ int start_combat() {
 
         printf("I Will : ");
         scanf("%d", &action);
+        beepy();
 
         if (action == 1)
         {   
