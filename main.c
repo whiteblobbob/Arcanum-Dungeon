@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #ifdef _WIN32
 #include <windows.h>
-#define sleep(x) Sleep(1000 * (x))   // Windows uses Sleep(milliseconds)
+#define sleep(x) Sleep(1000 * (x))   // Windows Sleep
 #else
 #include <unistd.h>                  // Linux/Mac
 #endif
@@ -78,15 +78,15 @@ int main() {
     
     // Story mulai dari sini
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
-    printf("%s\a bepppp!%s\n",red, reset);
     sleep(2);
     /* nyoba suara */
     beep();
-    // mulai combat
     start_combat();
-    // selesai combat
+    // End Of Battle UI Code
 
     // Checkpoint UI
+
+
     printf("This is checkpoint UI\n");
 
     return 0;
