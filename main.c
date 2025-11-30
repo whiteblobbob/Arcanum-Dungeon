@@ -8,6 +8,7 @@
 #endif
 #include "combat.h"
 #include "utils.h"
+#include "sound.h"
 
 
 
@@ -73,21 +74,20 @@ int main() {
         printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
     };
     } while (menu < 1 || menu > 3);
-    // End Of Menu UI Code
+    // menu UI sampai disini
     
-    // Battle UI Code
+    // Story mulai dari sini
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
+    printf("%s\a bepppp!%s\n",red, reset);
     sleep(2);
+    /* nyoba suara */
+    beep();
+    // mulai combat
     start_combat();
-    // End Of Battle UI Code
+    // selesai combat
 
     // Checkpoint UI
-
-
-    printf("This is checkpoint UI");
-    
-
-    // End of Checkpoint UI
+    printf("This is checkpoint UI\n");
 
     return 0;
 }
