@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "combat.h"
 #include "utils.h"
+#include "storage.h"
 
 int main() {
     // rng seeding
@@ -12,7 +13,6 @@ int main() {
 
     // UI Select Variable
     int menu;
-
 
     // Color Variable
     const char *purple = "\033[0;35m";
