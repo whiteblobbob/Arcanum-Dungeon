@@ -1,21 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <stdbool.h>
-#ifdef _WIN32
-#include <windows.h>
-#define sleep(x) Sleep(1000 * (x))   // Windows uses Sleep(milliseconds)
-#else
-#include <unistd.h>                  // Linux/Mac
-#endif
+#include <unistd.h>
 #include "combat.h"
 #include "utils.h"
-
-
+#include "storage.h"
 
 int main() {
+    // rng seeding
+    srand(time(NULL));
 
     // UI Select Variable
     int menu;
-
 
     // Color Variable
     const char *purple = "\033[0;35m";
@@ -78,7 +75,7 @@ int main() {
     // Battle UI Code
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
     sleep(2);
-    start_combat();
+    start_combat(100);
     // End Of Battle UI Code
 
     // Checkpoint UI
