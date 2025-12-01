@@ -1,22 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <stdbool.h>
-#ifdef _WIN32
-#include <windows.h>
-#define sleep(x) Sleep(1000 * (x))   // Windows Sleep
-#else
-#include <unistd.h>                  // Linux/Mac
-#endif
+#include <unistd.h>
 #include "combat.h"
 #include "utils.h"
-#include "sound.h"
-
-
+#include "storage.h"
 
 int main() {
+    // rng seeding
+    srand(time(NULL));
 
     // UI Select Variable
     int menu;
-
 
     // Color Variable
     const char *purple = "\033[0;35m";
@@ -74,20 +70,21 @@ int main() {
         printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
     };
     } while (menu < 1 || menu > 3);
-    // menu UI sampai disini
+    // End Of Menu UI Code
     
-    // Story mulai dari sini
+    // Battle UI Code
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
     sleep(2);
-    /* nyoba suara */
-    beep();
-    start_combat();
+    start_combat(100);
     // End Of Battle UI Code
 
     // Checkpoint UI
 
 
-    printf("This is checkpoint UI\n");
+    printf("This is checkpoint UI");
+    
+
+    // End of Checkpoint UI
 
     return 0;
 }

@@ -11,3 +11,15 @@ void clear_screen() {
         system("clear");
     #endif
 }
+
+void gotoxy(x,y) {
+    #ifdef _WIN32
+        COORD coord;
+        coord.X = x;
+        coord.Y = y;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+        return;
+    #else
+        printf("\033[%d;%dH", y, x);
+    #endif
+}
