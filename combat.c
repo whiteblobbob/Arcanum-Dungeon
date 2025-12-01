@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include "combat.h"
 #include "utils.h"
 
@@ -66,7 +67,7 @@ int start_combat() {
 
     int enemy_hp = enemy_stats[0];
     int enemy_mana = enemy_stats[3];
-
+    
     while (player_hp > 0 && enemy_hp > 0) {
 
         //disabled due UI needs
@@ -204,6 +205,7 @@ int start_combat() {
         int dmg = damage(enemy_stats[1], player_stats[2], 1, combat_log);
         player_hp -= dmg;
     }
+    
 
     clear_screen();
 
