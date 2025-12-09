@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-<<<<<<< HEAD
-#include <stdbool.h>
-=======
 #include <unistd.h>
->>>>>>> origin
 #include "combat.h"
 #include "utils.h"
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include "sound.h"
 
 // Color Variable
 const char *purple = "\033[0;35m";
@@ -66,20 +66,20 @@ int start_combat(int level) {
 
     // sementara hardcoded
     player.hp = 10;
-    player.atk = 1;
+    player.atk = 2;
     player.def = 2;
     player.mana = 10;
 
-    enemy.hp = 10;
+    enemy.hp = 2;
     enemy.atk = 1;
     enemy.def = 2;
-    enemy.mana = 10;
+    enemy.mana = 2;
 
     // level scaling
-    enemy.hp += (level * enemy.hp / 5) + (rand() % 26);
-    enemy.atk += (level * enemy.atk / 6) + (rand() % 11);
-    enemy.def += (level * enemy.def / 6) + (rand() % 16);
-    enemy.mana += (level * enemy.mana / 5) + (rand() % 26);
+    enemy.hp += (level * enemy.hp / 2) + (rand() % 2);
+    enemy.atk += (level * enemy.atk / 2) + (rand() % 3);
+    enemy.def += (level * enemy.def / 3) + (rand() % 3);
+    enemy.mana += (level * enemy.mana / 5) + (rand() % 5);
 
     // reset the combat log
     combat_log[0][0] = '\0';
@@ -90,16 +90,10 @@ int start_combat(int level) {
     int player_def = player.def;
     int player_mana = player.mana;
 
-<<<<<<< HEAD
-    int enemy_hp = enemy_stats[0];
-    int enemy_mana = enemy_stats[3];
-    
-=======
     int enemy_hp = enemy.hp;
     int enemy_def = enemy.def;
     int enemy_mana = enemy.mana;
 
->>>>>>> origin
     while (player_hp > 0 && enemy_hp > 0) {
         // reset def
         player_def = player.def;
@@ -132,10 +126,13 @@ int start_combat(int level) {
         scanf("%d", &action);
 
         if (action == 1) {
+          
+            play_sound("sound/undertale-slash.wav");
+            sleep(1);
             printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
-
             int dmg = damage(player.atk, enemy_def, 0);
             enemy_hp -= dmg;
+            play_sound("sound/undertale-hit.wav");
             sleep(2);
             
         } else if (action == 2) {
@@ -223,6 +220,8 @@ int start_combat(int level) {
         // enemy action
         int dmg = damage(enemy.atk, player_def, 1);
         player_hp -= dmg;
+        play_sound("sound/jokowi-kaget.wav");
+        sleep(1);
     }
     
 
