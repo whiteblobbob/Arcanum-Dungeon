@@ -1,2 +1,6 @@
 .vscode/
 *.exe
+build/
+build-windows/
+CMakeLists.txt
+toolchain-mingw.cmake
