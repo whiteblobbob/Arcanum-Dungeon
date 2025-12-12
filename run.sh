@@ -1,4 +1,3 @@
-#!/bin/bash
-
-gcc combat.c main.c utils.c storage.c dungeon.c -o game
-./game
+cmake -G Ninja -S . -B "build/" -DCMAKE_BUILD_TYPE=Release
+cmake --build "build/"
+build/bin/arcanum

@@ -7,6 +7,10 @@
 #include "utils.h"
 #include "storage.h"
 #include "dungeon.h"
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include "sound.h"
 
 int main() {
     // rng seeding
@@ -23,6 +27,7 @@ int main() {
     const char *green = "\033[0;32m";
     const char *yellow = "\033[0;33m";
     const char *red = "\e[1;31m";
+
     const char *black = "\033[0;30m";
 
     // Reset to default color

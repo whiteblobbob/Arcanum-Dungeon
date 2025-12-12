@@ -6,6 +6,10 @@
 #include "utils.h"
 #include "shared.h"
 #include "storage.h"
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include "sound.h"
 
 // Color Variable
 const char *purple = "\033[0;35m";
@@ -119,10 +123,12 @@ int start_combat(struct player *save, int level) {
         scanf(" %c", &action);
 
         if (action == '1') {
+            play_sound("sound/undertale-slash.wav");
+            sleep(1);
             printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
-
             int dmg = damage(player.atk, enemy_def, 0);
             enemy_hp -= dmg;
+            play_sound("sound/undertale-hit.wav");
             sleep(2);
             
         } else if (action == '2') {
@@ -210,7 +216,10 @@ int start_combat(struct player *save, int level) {
         // enemy action
         int dmg = damage(enemy.atk, player_def, 1);
         player_hp -= dmg;
+        play_sound("sound/jokowi-kaget.wav");
+        sleep(1);
     }
+    
 
     clear_screen();
 
