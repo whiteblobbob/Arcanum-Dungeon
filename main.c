@@ -6,6 +6,7 @@
 #include "combat.h"
 #include "utils.h"
 #include "storage.h"
+#include "dungeon.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -16,7 +17,7 @@ int main() {
     srand(time(NULL));
 
     // UI Select Variable
-    int menu;
+    char menu = '0';
 
     // Color Variable
     const char *purple = "\033[0;35m";
@@ -48,48 +49,53 @@ int main() {
     printf("                          3. %sExit                                 %s|%s\n", red, purple, reset);
     printf("%s====================================================================%s\n", purple, reset);
 
-    do
-    {
-    printf("Menu Selection : ");
-    scanf("%d", &menu);
+    while (menu == '0') {
+        printf("Menu Selection: ");
+        scanf(" %c", &menu);
 
-    
-  if (menu == 1)
-    {   
-        printf("%sWelcome to the World My Hero! %s\n", aqua, reset);
-        sleep(2);
-        
-    }else if (menu == 2)
-    {
-        printf("%sWelcome Back Hero! %s\n", blue, reset);
-        sleep(2);
-        printf("%sChecking Your Journey, A Moment!%s\n", yellow, reset);
-        sleep(2);
+        if (menu == '1') {
+            char name[17];
+            struct player save;
 
-    }else if (menu == 3)
-    {   
-        printf("%sWe'll Wait For Your Comeback, Hero!%s\n", yellow, reset);
-        abort();
+            printf("%sWelcome to the world of Arcanum, Hero!%s\n", aqua, reset);
+            sleep(2);
+            printf("%sWould you please tell us your name?%s\n", aqua, reset);
+            printf("Name (Max 16 letters): ");
+
+            scanf("%16s", name);
+            create_data(&save, name);
+
+            save_data(&save);
+        } else if (menu == '2') {
+            struct player save;
+            int save_exists = load_data(&save);
+
+            if (!save_exists) {
+                printf("%sYou don't have a save file yet!%s\n", red, reset);
+                menu = '0';
+                continue;
+            }
+
+            printf("%sWelcome back, Hero!%s\n", blue, reset);
+            sleep(2);
+            printf("%sChecking your journey, wait for a moment!%s\n", yellow, reset);
+            sleep(2);
+
+            enter_dungeon(&save);
+        } else if (menu == '3') {   
+            printf("%sWe'll wait for your return, Hero!%s\n", yellow, reset);
+
+            // exit with error code 0
+            return 0;
+        } else {
+            printf("%sHero, your choice isn't valid...%s\n", red, reset);
+            sleep(2);
+            menu = '0';
+        }
     }
-    else{
-        printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
-    };
-    } while (menu < 1 || menu > 3);
-    // End Of Menu UI Code
-    
-    // Battle UI Code
-    printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
-    sleep(2);
-    start_combat(1);
-    // End Of Battle UI Code
 
     // Checkpoint UI
-
-
     printf("This is checkpoint UI");
-    
-
-    // End of Checkpoint UI
 
     return 0;
 }

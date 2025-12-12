@@ -1,2 +1,2 @@
-gcc combat.c main.c utils.c storage.c sound.c -o game -lwinmm
+gcc combat.c main.c utils.c storage.c dungeon.c sound.c -o game -lwinmm
 game

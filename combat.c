@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include "combat.h"
 #include "utils.h"
+#include "shared.h"
+#include "storage.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -60,26 +62,21 @@ int damage(int atk, int def, int attacker) {
     return dmg;
 }
 
-int start_combat(int level) {
+int start_combat(struct player *save, int level) {
     struct entity player;
     struct entity enemy;
 
     // sementara hardcoded
-    player.hp = 10;
-    player.atk = 2;
-    player.def = 2;
-    player.mana = 10;
-
-    enemy.hp = 2;
-    enemy.atk = 1;
-    enemy.def = 2;
-    enemy.mana = 2;
+    player.hp = (*save).level * 2 + 10;
+    player.atk = (*save).level + 5;
+    player.def = (*save).level + 5;
+    player.mana = (*save).level * 2 + 10;
 
     // level scaling
-    enemy.hp += (level * enemy.hp / 2) + (rand() % 2);
-    enemy.atk += (level * enemy.atk / 2) + (rand() % 3);
-    enemy.def += (level * enemy.def / 3) + (rand() % 3);
-    enemy.mana += (level * enemy.mana / 5) + (rand() % 5);
+    enemy.hp = (level * 2) + (rand() % 13);
+    enemy.atk = level + (rand() % 6);
+    enemy.def = level + (rand() % 6);
+    enemy.mana = (level * 2) + (rand() % 13);
 
     // reset the combat log
     combat_log[0][0] = '\0';
@@ -102,7 +99,7 @@ int start_combat(int level) {
         // disabled due UI needs
         // clear_screen();
 
-        int action;
+        char action = '0';
 
         printf("%s====================================================================%s\n", purple, reset);
         printf("%s|                                                                  |%s\n", purple, reset);
@@ -123,10 +120,9 @@ int start_combat(int level) {
         printf("Enemy  %d HP    %d ATK    %d MANA    %d DEF\n\n", enemy_hp, enemy.atk, enemy_mana, enemy.def);
 
         printf("I Will : ");
-        scanf("%d", &action);
+        scanf(" %c", &action);
 
-        if (action == 1) {
-          
+        if (action == '1') {
             play_sound("sound/undertale-slash.wav");
             sleep(1);
             printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
@@ -135,21 +131,21 @@ int start_combat(int level) {
             play_sound("sound/undertale-hit.wav");
             sleep(2);
             
-        } else if (action == 2) {
+        } else if (action == '2') {
             printf("%sYou are guarding their attack, defense up! %s\n", yellow, reset);
             player_def += 2;
             sleep(2);
 
-        } else if (action == 3) {   
+        } else if (action == '3') {   
             printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
             printf("1. %sRegen %s(Cost 3 mana) %s- %sHeals 2 HP%s\n", green, aqua, reset, green, reset);
             
-            int skill;
+            char skill;
 
             printf("I Will use : ");
-            scanf("%d", &skill);
+            scanf(" %c", &skill);
 
-            if (skill == 1) {
+            if (skill == '1') {
                 if (player_mana < 3) {
                     printf("%sYou tried to cast the healing but, you do not have enough Mana!%s\n", red, reset);
                     sleep(2);
@@ -179,16 +175,16 @@ int start_combat(int level) {
                 sleep(2);
                 continue;
             }
-        } else if (action == 4) {
+        } else if (action == '4') {
             printf("%sIs there any strategy would you like?\n%s", yellow, reset);
             printf("1. %sFocus %s - %s Restore 2 Mana%s\n",aqua, reset, aqua, reset);
 
-            int other;
+            char other;
 
             printf("Let's : ");
-            scanf("%d", &other);
+            scanf("%c", &other);
 
-            if (other == 1) {
+            if (other == '1') {
                 int mana_amount = 3;
 
                 if (player_mana + mana_amount > player.mana) {
@@ -233,7 +229,26 @@ int start_combat(int level) {
 
         return 0;
     } else if (enemy_hp <= 0) {
-        printf("%sHero!, Great work! (Exp +2)%s\n", green, reset);    
+        // exp reward
+        int exp_reward = level * 3;
+        (*save).exp += exp_reward;
+
+        printf("%sGreat work, Hero! (+%d EXP)%s\n", green, exp_reward, reset);
+
+        // save->exp == (*save).exp
+        if (save->exp >= save->max_exp) {
+            save->level++;
+            save->exp -= save->max_exp;
+            save->max_exp += save->max_exp / 2;
+
+            printf("%sYou leveled up! (Lv. %d -> Lv. %d)%s\n", green, save->level - 1, save->level, reset);
+        }
+
+        printf("%s%d/%d EXP%s\n", green, save->exp, save->max_exp, reset);
+
+        // save data
+        save_data(save);
+
         sleep(2);
 
         return 1;
