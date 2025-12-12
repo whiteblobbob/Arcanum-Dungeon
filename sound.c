@@ -1,19 +1,20 @@
 /* Cross-platform beep implementation */
-#include "sound.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 #endif
 
-void playsound(void) {
+void play_sound(const char *filename) {
 #ifdef _WIN32
-    /* Windows beep using Beep API (frequency 1000 Hz, 300 ms) */
-    Beep(1000, 300);
+
+    // WINDOWS → Play WAV file
+    PlaySound(filename, NULL, SND_FILENAME | SND_ASYNC);
+
 #else
     system("paplay src/slash.mp3");
 #endif
