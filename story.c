@@ -3,6 +3,7 @@
 #include <time.h>
 #include "story.h"
 #include "utils.h"
+#include "combat.h"
 
 void displayknight(){
     printf("##########################################\n");
@@ -36,7 +37,19 @@ void playstory(int chapter) {
             displayknight();
             printf("Chapter 1\n");
             sleep(1);
-            printf("The journey begins in a small village...\n");
+            printf("the story begin in a dark kingdom...\n");
+            sleep(2);
+            printf("where the knight were given a task to defeat the foes\n");
+            sleep(2);
+            printf("to fix the root of our problems\n");
+            sleep(2);
+            printf("and make this place beautiful again\n");
+            sleep(2);
+            printf("so the knight went to south\n");
+            sleep(2);
+            printf("to find the source of the darkness\n");
+            sleep(2);
+            start_combat(chapter);
 
             break;
         case 2:
