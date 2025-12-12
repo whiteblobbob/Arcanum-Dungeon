@@ -48,7 +48,8 @@ int main() {
         printf("Menu Selection: ");
         scanf(" %c", &menu);
 
-        if (menu == '1') {   
+        if (menu == '1') {
+            char name[17];
             struct player save;
 
             printf("%sWelcome to the world of Arcanum, Hero!%s\n", aqua, reset);
@@ -56,9 +57,8 @@ int main() {
             printf("%sWould you please tell us your name?%s\n", aqua, reset);
             printf("Name (Max 16 letters): ");
 
-            scanf("%16s", save.name);
-            save.level = 1;
-            save.exp = 0;
+            scanf("%16s", name);
+            create_data(&save, name);
 
             save_data(&save);
         } else if (menu == '2') {

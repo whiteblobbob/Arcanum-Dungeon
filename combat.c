@@ -5,6 +5,7 @@
 #include "combat.h"
 #include "utils.h"
 #include "shared.h"
+#include "storage.h"
 
 // Color Variable
 const char *purple = "\033[0;35m";
@@ -68,10 +69,10 @@ int start_combat(struct player *save, int level) {
     player.mana = (*save).level * 2 + 10;
 
     // level scaling
-    enemy.hp = (level * 2) + (rand() % 26);
-    enemy.atk = level + (rand() % 11);
-    enemy.def = level + (rand() % 16);
-    enemy.mana = (level * 2) + (rand() % 26);
+    enemy.hp = (level * 2) + (rand() % 13);
+    enemy.atk = level + (rand() % 6);
+    enemy.def = level + (rand() % 6);
+    enemy.mana = (level * 2) + (rand() % 13);
 
     // reset the combat log
     combat_log[0][0] = '\0';
@@ -219,7 +220,26 @@ int start_combat(struct player *save, int level) {
 
         return 0;
     } else if (enemy_hp <= 0) {
-        printf("%sHero!, Great work! (Exp +2)%s\n", green, reset);    
+        // exp reward
+        int exp_reward = level * 3;
+        (*save).exp += exp_reward;
+
+        printf("%sGreat work, Hero! (+%d EXP)%s\n", green, exp_reward, reset);
+
+        // save->exp == (*save).exp
+        if (save->exp >= save->max_exp) {
+            save->level++;
+            save->exp -= save->max_exp;
+            save->max_exp += save->max_exp / 2;
+
+            printf("%sYou leveled up! (Lv. %d -> Lv. %d)%s\n", green, save->level - 1, save->level, reset);
+        }
+
+        printf("%s%d/%d EXP%s\n", green, save->exp, save->max_exp, reset);
+
+        // save data
+        save_data(save);
+
         sleep(2);
 
         return 1;

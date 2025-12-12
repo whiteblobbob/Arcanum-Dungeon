@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include "shared.h"
 
+void create_data(struct player *save, char name[17]) {
+    (*save).exp = 0;
+    (*save).level = 1;
+    (*save).max_exp = 20;
+    snprintf((*save).name, 17, "%s", name);
+}
+
 int load_data(struct player *save) {
     FILE *file = fopen("save.dat", "rb");
 

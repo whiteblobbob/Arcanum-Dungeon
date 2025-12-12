@@ -5,6 +5,7 @@ struct player {
     char name[17];
     int level;
     int exp;
+    int max_exp;
 };
 
 #endif
