@@ -123,6 +123,7 @@ int start_combat(int level) {
 
         if (action == 1) {
             printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
+            playsound();
 
             int dmg = damage(player.atk, enemy_def, 0);
             enemy_hp -= dmg;

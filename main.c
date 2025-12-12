@@ -75,7 +75,7 @@ int main() {
     // Battle UI Code
     printf("%sHero, Watch Out!, You Encountered an Enemy%s\n",red, reset);
     sleep(2);
-    start_combat(100);
+    playstory(1);
     // End Of Battle UI Code
 
     // Checkpoint UI

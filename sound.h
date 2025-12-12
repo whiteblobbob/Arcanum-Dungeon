@@ -2,6 +2,6 @@
 #define SOUND_H
 
 /* Cross-platform beep function */
-void beep(void);
+void playsound(void);
 
 #endif
