@@ -14,6 +14,8 @@
 int main() {
     // rng seeding
     srand(time(NULL));
+    // Initialize Sound and Music System
+    init_audio();
 
     // UI Select Variable
     int menu;
@@ -47,28 +49,44 @@ int main() {
     printf("%s|%s", purple, reset);
     printf("                          3. %sExit                                 %s|%s\n", red, purple, reset);
     printf("%s====================================================================%s\n", purple, reset);
-
+    play_bgm("sound/bgm/Fontainebleau - Just You.wav");
+    set_bgm_volume(0.4f);
     do
     {
     printf("Menu Selection : ");
     scanf("%d", &menu);
-
+    
     
   if (menu == 1)
     {   
+        stop_bgm();
         printf("%sWelcome to the World My Hero! %s\n", aqua, reset);
+        play_sfx("sound/sfx/new-game.wav");
+        set_sfx_volume(0.4f);
         sleep(2);
         
+        
+        
     }else if (menu == 2)
-    {
+    {   
+        stop_bgm();
         printf("%sWelcome Back Hero! %s\n", blue, reset);
-        sleep(2);
+        sleep(1);
         printf("%sChecking Your Journey, A Moment!%s\n", yellow, reset);
         sleep(2);
+        play_sfx("sound/sfx/load.wav");
+        set_sfx_volume(0.4f);
+        printf("%sSave file reached%s\n", green, reset);
+        sleep(1);
+        
 
     }else if (menu == 3)
     {   
-        printf("%sWe'll Wait For Your Comeback, Hero!%s\n", yellow, reset);
+        stop_bgm();
+        printf("%sSee you soon, Hero!%s\n", yellow, reset);
+        play_sfx("sound/sfx/exit.wav");
+        sleep(4);
+        stop_all_sfx();
         abort();
     }
     else{

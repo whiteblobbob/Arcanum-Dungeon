@@ -23,7 +23,7 @@ const char *black = "\033[0;30m";
 const char *reset = "\033[0m";
 
 // CONSTANTS
-int CRIT_CHANCE = 7;
+int CRIT_CHANCE = 50;
 
 // stats player dan enemy (sementara)
 struct entity {
@@ -52,9 +52,9 @@ int damage(int atk, int def, int attacker) {
     }
 
     if (attacker == 0) {
-        sprintf(combat_log[attacker], "You dealt %d damage!%s", dmg, (crit == 1 ? " (CRIT)" : ""));
+        sprintf(combat_log[attacker], "%sYou dealt %d damage!%s", aqua, dmg, reset, (crit == 1 ? " (CRIT)" : ""));
     } else {
-        sprintf(combat_log[attacker], "The enemy dealt %d damage!%s", dmg, (crit == 1 ? " (CRIT)" : ""));
+        sprintf(combat_log[attacker], "%sThe enemy dealt %d damage!%s",red, dmg, reset, (crit == 1 ? " (CRIT)" : ""));
     }
 
     return dmg;
@@ -94,14 +94,31 @@ int start_combat(int level) {
     int enemy_def = enemy.def;
     int enemy_mana = enemy.mana;
 
+    // Background Music with random selection
+    const char* bgm_list[] = {
+        "sound/bgm/Death By Glamour (UNDERTALE).wav",
+        "sound/bgm/ASGORE (UNDERTALE).wav",
+        "sound/bgm/Power Of NEO.wav"
+    };
+
+    int bgm_count = 3;
+
+    // Pilih satu lagu secara acak
+    int r = rand() % bgm_count;
+
+    // Mulai BGM
+    play_bgm(bgm_list[r]);
+
+    // Atur volume
+    set_bgm_volume(0.2f);
+
+
     while (player_hp > 0 && enemy_hp > 0) {
         // reset def
         player_def = player.def;
         enemy_def = enemy.def;
 
-        // disabled due UI needs
-        // clear_screen();
-
+        //Display Combat Menu
         int action;
 
         printf("%s====================================================================%s\n", purple, reset);
@@ -126,18 +143,26 @@ int start_combat(int level) {
         scanf("%d", &action);
 
         if (action == 1) {
-          
-            play_sound("sound/undertale-slash.wav");
+            play_sfx("sound/sfx/slash.wav");
             sleep(1);
-            printf("%sYou Attacked an enemy, you deal amount of damage %s\n", red, reset);
+            int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
             int dmg = damage(player.atk, enemy_def, 0);
             enemy_hp -= dmg;
-            play_sound("sound/undertale-hit.wav");
+            if (crit == 1)
+            {
+            play_sfx("sound/sfx/crit.wav");
+            printf("%sYou Attacked an enemy, you deal %d damage (CRITICAL HIT)%s\n", red, dmg, reset);
             sleep(2);
-            
+            }else{
+            play_sfx("sound/sfx/hit.wav");
+            printf("%sYou Attacked an enemy, you deal %d damage %s\n", red, dmg, reset);
+            sleep(2);
+            }
+        
         } else if (action == 2) {
-            printf("%sYou are guarding their attack, defense up! %s\n", yellow, reset);
+            printf("%sYou are guarding their attack, your defense temporarily increased by 2! %s\n", yellow, reset);
             player_def += 2;
+            play_sfx("sound/sfx/defend.wav");
             sleep(2);
 
         } else if (action == 3) {   
@@ -150,6 +175,7 @@ int start_combat(int level) {
             scanf("%d", &skill);
 
             if (skill == 1) {
+                play_sfx("sound/sfx/regen.wav");
                 if (player_mana < 3) {
                     printf("%sYou tried to cast the healing but, you do not have enough Mana!%s\n", red, reset);
                     sleep(2);
@@ -177,6 +203,7 @@ int start_combat(int level) {
             } else {
                 printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
                 sleep(2);
+                clear_screen(); 
                 continue;
             }
         } else if (action == 4) {
@@ -189,6 +216,8 @@ int start_combat(int level) {
             scanf("%d", &other);
 
             if (other == 1) {
+                play_sfx("sound/sfx/focus.wav");
+
                 int mana_amount = 3;
 
                 if (player_mana + mana_amount > player.mana) {
@@ -202,7 +231,7 @@ int start_combat(int level) {
             } else {
                 printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
                 sleep(2);
-                continue;
+                continue; 
             }
         } else {
             printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
@@ -213,27 +242,45 @@ int start_combat(int level) {
         // apakah musuh masih hidup
         if (enemy_hp <= 0) {
             printf("%sThe enemy has been defeated!%s\n", yellow, reset);
-            sleep(1);
+            play_sfx("sound/sfx/enemy-defeated.wav");    
+            sleep(2);
             break;
         }
 
         // enemy action
         int dmg = damage(enemy.atk, player_def, 1);
         player_hp -= dmg;
-        play_sound("sound/jokowi-kaget.wav");
+        int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
+        if(crit == 1){
+        printf("%sThe enemy Attacked you, it deals %d damage (CRITICAL HIT) %s\n", red, dmg, reset);
+        play_sfx("sound/sfx/enemy-crit.wav");
+        }else{
+        printf("%sThe enemy Attacked you, it deals %d damage %s\n", red, dmg, reset);
+        play_sfx("sound/sfx/jokowi-kaget.wav");
+        }
+
         sleep(1);
+        clear_screen();
     }
     
 
     clear_screen();
 
     if (player_hp <= 0) {
+        play_bgm("sound/bgm/Fontainebleau - Doubt.wav");
         printf("%sYou have fallen...%s\n", red, reset);
-        sleep(2);
+        printf("%sPress ESC to exit.%s\n", red, reset);
+        press_esc_key();
+        stop_bgm();
 
         return 0;
     } else if (enemy_hp <= 0) {
-        printf("%sHero!, Great work! (Exp +2)%s\n", green, reset);    
+        play_bgm("sound/bgm/Fontainebleau - A Joyful Moment.wav");
+        printf("%sHero!, Great work! (Exp +2)%s\n", green, reset);   
+        sleep(2);
+        printf("%sPress ENTER to continue your adventure.%s\n", green, reset); 
+        press_enter_key();
+        printf("%sContinuing your adventure...%s\n", aqua, reset);
         sleep(2);
 
         return 1;

@@ -3,6 +3,11 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+//For _getch() function
+#include <conio.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "sound.h"
 
 
 /*
@@ -14,6 +19,30 @@ void clear_screen() {
     #else
         system("clear");
     #endif
+}
+
+void press_esc_key() {
+    while (1) {
+        int ch = _getch();
+        if (ch == 27) //Ascii value for ESC
+          { 
+            stop_bgm();
+            stop_all_sfx();
+            abort();
+            break;
+        }
+    }
+} 
+
+void press_enter_key()
+{
+    while (1) {
+        int ch = _getch();
+        if (ch == 13) //Ascii value for ENTER
+          { 
+            break;
+        }
+    }
 }
 
 //Fixed gotoxy function
