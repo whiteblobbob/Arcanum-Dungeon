@@ -3,7 +3,8 @@
 
 #include "shared.h"
 
-struct player load_data();
-void save_data(struct player save);
+void create_data(struct player *save, char name[17]);
+int load_data(struct player *save);
+void save_data(struct player *save);
 
 #endif
