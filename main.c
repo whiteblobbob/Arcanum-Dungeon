@@ -15,6 +15,8 @@
 int main() {
     // rng seeding
     srand(time(NULL));
+    // Initialize Sound and Music System
+    init_audio();
 
     // UI Select Variable
     char menu = '0';
