@@ -73,10 +73,10 @@ int start_combat(struct player *save, int level) {
     player.mana = (*save).level * 2 + 10;
 
     // level scaling
-    enemy.hp = (level * 2) + (rand() % 13);
+    enemy.hp = (level * 1.5) + (rand() % 8);
     enemy.atk = level + (rand() % 6);
     enemy.def = level + (rand() % 6);
-    enemy.mana = (level * 2) + (rand() % 13);
+    enemy.mana = (level * 2) + (rand() % 8);
 
     // reset the combat log
     combat_log[0][0] = '\0';
@@ -135,7 +135,7 @@ int start_combat(struct player *save, int level) {
 
         printf("%s\n%s\n\n", combat_log[0], combat_log[1]);
         
-        printf("Hero   %d HP    %d ATK    %d MANA    %d DEF\n", player_hp, player.atk, player_mana, player.def);
+        printf("%s   %d HP    %d ATK    %d MANA    %d DEF\n",save->name, player_hp, player.atk, player_mana, player.def);
         printf("Enemy  %d HP    %d ATK    %d MANA    %d DEF\n\n", enemy_hp, enemy.atk, enemy_mana, enemy.def);
 
         printf("I Will : ");
@@ -150,11 +150,11 @@ int start_combat(struct player *save, int level) {
             if (crit == 1)
             {
             play_sfx("sound/sfx/crit.wav");
-            printf("%sYou Attacked an enemy, you deal %d damage (CRITICAL HIT)%s\n", red, dmg, reset);
+            printf("%sYou Attacked an enemy, %s deal %d damage (CRITICAL HIT)%s\n", red,save->name, dmg, reset);
             sleep(2);
             }else{
             play_sfx("sound/sfx/hit.wav");
-            printf("%sYou Attacked an enemy, you deal %d damage %s\n", red, dmg, reset);
+            printf("%sYou Attacked an enemy, %s deal %d damage %s\n", red, save->name, dmg, reset);
             sleep(2);
             }
         
