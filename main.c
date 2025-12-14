@@ -29,7 +29,6 @@ int main() {
     const char *green = "\033[0;32m";
     const char *yellow = "\033[0;33m";
     const char *red = "\e[1;31m";
-
     const char *black = "\033[0;30m";
 
     // Reset to default color
@@ -66,7 +65,7 @@ int main() {
             printf("Name (Max 16 letters): ");
             scanf("%16s", name);
             create_data(&save, name);
-            
+
             save_data(&save);
             printf("%s%s.. A fitting name for the hero who will save the world..%s\n",aqua ,save.name, reset);
             sleep(3);
@@ -74,7 +73,7 @@ int main() {
             play_sfx("sound/sfx/new-game.wav");
             set_sfx_volume(0.4f);
             sleep(2);
-
+            clear_screen();
             enter_dungeon(&save);
         } else if (menu == '2') {
             struct player save;
@@ -95,12 +94,14 @@ int main() {
             play_sfx("sound/sfx/load.wav");
             set_sfx_volume(0.4f);
             sleep(2);
+            clear_screen();
             enter_dungeon(&save);
+  
 
         } else if (menu == '3') {   
             play_sfx("sound/sfx/exit.wav");
             printf("%sWe'll wait for your return, Hero!%s\n", yellow, reset);
-
+            sleep(4);
             // exit with error code 0
             return 0;
         } else {
