@@ -115,8 +115,8 @@ int start_combat(struct player *save, int level) {
         player_def = player.def;
         enemy_def = enemy.def;
 
-        // disabled due UI needs
-        // clear_screen();
+  
+
 
         char action = '0';
 
@@ -135,8 +135,8 @@ int start_combat(struct player *save, int level) {
 
         printf("%s\n%s\n\n", combat_log[0], combat_log[1]);
         
-        printf("%s   %d HP    %d ATK    %d MANA    %d DEF\n",save->name, player_hp, player.atk, player_mana, player.def);
-        printf("Enemy  %d HP    %d ATK    %d MANA    %d DEF\n\n", enemy_hp, enemy.atk, enemy_mana, enemy.def);
+        printf("%s | Lv : %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player.def);
+        printf("Enemy | Lv : %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n",level, enemy_hp,  enemy.atk, enemy_mana, enemy.def);
 
         printf("I Will : ");
         scanf(" %c", &action);
@@ -159,15 +159,15 @@ int start_combat(struct player *save, int level) {
             }
         
         } else if (action == '2') {
-            printf("%sYou are guarding their attack, your defense temporarily increased by 2! %s\n", yellow, reset);
-            player_def += 2;
+            player_def += 2 * save->level;
+            printf("%sYou are guarding their attack, your defense temporarily increased to %d! %s\n", yellow, player_def, reset);
             play_sfx("sound/sfx/defend.wav");
             sleep(2);
 
         } else if (action == '3') {   
             printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
-            printf("1. %sRegen %s(Cost 3 mana) %s- %sHeals 2 HP%s\n", green, aqua, reset, green, reset);
-            
+            printf("1. %sRegen %s(Cost 2 x %d) %s- %sHeals 3 x %d amount of HP%s\n", green, aqua, save->level, reset, green, save->level, reset);
+        
             char skill;
 
             printf("I Will use : ");
@@ -176,7 +176,7 @@ int start_combat(struct player *save, int level) {
             if (skill == '1') {
                 play_sfx("sound/sfx/regen.wav");
               
-                if (player_mana < 3) {
+                if (player_mana < 2 * save->level) {
                     printf("%sYou tried to cast the healing but, you do not have enough Mana!%s\n", red, reset);
                     sleep(2);
                     continue;
@@ -189,9 +189,9 @@ int start_combat(struct player *save, int level) {
                     continue;
                 }
 
-                int heal_amount = 2;
+                int heal_amount = 3 * save->level;
 
-                player_mana -= 3;
+                player_mana -= 2 * save->level;
                 
                 if (player_hp + heal_amount > player.hp) {
                     heal_amount = player.hp - player_hp;
@@ -200,6 +200,7 @@ int start_combat(struct player *save, int level) {
 
                 printf("%sYou regained %d HP%s\n", green, heal_amount, reset);
                 sleep(2);
+                // continue; (Pakai fitur ini kalau misalkan mau ngeheal, cuma gak ngurangin turn)
             } else {
                 printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
                 sleep(2);
@@ -208,17 +209,17 @@ int start_combat(struct player *save, int level) {
             }
         } else if (action == '4') {
             printf("%sIs there any strategy would you like?\n%s", yellow, reset);
-            printf("1. %sFocus %s - %s Restore 2 Mana%s\n",aqua, reset, aqua, reset);
+            printf("1. %sFocus %s - %s Restore 2 x %d Mana%s\n",aqua, reset, aqua, save->level, reset);
 
             char other;
 
             printf("Let's : ");
-            scanf("%c", &other);
+            scanf(" %c", &other);
 
             if (other == '1') {
                 play_sfx("sound/sfx/focus.wav");
               
-                int mana_amount = 3;
+                int mana_amount = 2 * save->level;
 
                 if (player_mana + mana_amount > player.mana) {
                     mana_amount = player.mana - player_mana;
