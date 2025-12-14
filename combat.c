@@ -35,34 +35,34 @@ struct entity {
     int mana;
 };
 
-char combat_log[2][100] = {"", ""};
-
 int damage(int atk, int def, int attacker) {
-    // crit chance (boolean)
+    // crit or not
     int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
 
-    // damage calculation, guarantees minimum divisor is 1
-    int dmg = atk / ((def + 5) / 5);
+    int dmg = (atk * 5) / (def + 5);
 
+    // guarantees minimum damage = 1
     if (dmg <= 0) {
         dmg++;
     }
 
-    // crit (bypass defense)
+    // crit (bypasses defense defense)
     if (crit) {
         dmg += dmg / 2;
-    }
-
-    if (attacker == 0) {
-        sprintf(combat_log[attacker], "%sYou dealt %d damage!%s", aqua, dmg, reset, (crit == 1 ? " (CRIT)" : ""));
-    } else {
-        sprintf(combat_log[attacker], "%sThe enemy dealt %d damage!%s",red, dmg, reset, (crit == 1 ? " (CRIT)" : ""));
     }
 
     return dmg;
 }
 
-int start_combat(struct player *save, int level) {
+int start_combat(struct player *save, int floor, int boss) {
+    // hitung level musuh
+    int level = floor * 3 / 2;
+
+    // boss = level * 2
+    if (boss) {
+        level *= 2;
+    }
+
     struct entity player;
     struct entity enemy;
 
@@ -77,10 +77,6 @@ int start_combat(struct player *save, int level) {
     enemy.atk = level + (rand() % 6);
     enemy.def = level + (rand() % 6);
     enemy.mana = (level * 2) + (rand() % 8);
-
-    // reset the combat log
-    combat_log[0][0] = '\0';
-    combat_log[1][0] = '\0';
 
     // temp stats
     int player_hp = player.hp;
@@ -111,15 +107,15 @@ int start_combat(struct player *save, int level) {
 
 
     while (player_hp > 0 && enemy_hp > 0) {
+        clear_screen();
+
         // reset def
         player_def = player.def;
         enemy_def = enemy.def;
 
-  
-
-
         char action = '0';
 
+        printf("FLOOR %d\n\n", floor);
         printf("%s====================================================================%s\n", purple, reset);
         printf("%s|                                                                  |%s\n", purple, reset);
         printf("%s|%s                               %sAction%s                             |%s\n",purple, reset, aqua, purple, reset);
@@ -131,53 +127,60 @@ int start_combat(struct player *save, int level) {
         printf("%s|%s", purple, reset);
         printf("                 3. %sSkill                 %s4. %sOther%s                |%s\n", blue, reset, green, purple, reset);
         printf("%s====================================================================%s\n\n", purple, reset);
-
-
-        printf("%s\n%s\n\n", combat_log[0], combat_log[1]);
         
-        printf("%s | Lv : %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player.def);
-        printf("Enemy | Lv : %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n",level, enemy_hp,  enemy.atk, enemy_mana, enemy.def);
+        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player.def);
+        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n", (boss ? "BOSS" : "Enemy"), level, enemy_hp,  enemy.atk, enemy_mana, enemy.def);
 
-        printf("I Will : ");
+        printf("Action: ");
         scanf(" %c", &action);
+        clear_input_buffer();
 
         if (action == '1') {
             play_sfx("sound/sfx/slash.wav");
+
             sleep(1);
+
             int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
             int dmg = damage(player.atk, enemy_def, 0);
+
             enemy_hp -= dmg;
-            if (crit == 1)
-            {
-            play_sfx("sound/sfx/crit.wav");
-            printf("%sYou Attacked an enemy, %s deal %d damage (CRITICAL HIT)%s\n", red,save->name, dmg, reset);
-            sleep(2);
-            }else{
-            play_sfx("sound/sfx/hit.wav");
-            printf("%sYou Attacked an enemy, %s deal %d damage %s\n", red, save->name, dmg, reset);
-            sleep(2);
+
+            if (crit == 1) {
+                play_sfx("sound/sfx/crit.wav");
+                printf("%s%s attacked the enemy! Dealt %d damage! (CRITICAL HIT!)%s\n", red, save->name, dmg, reset);
+
+                sleep(2);
+            } else {
+                play_sfx("sound/sfx/hit.wav");
+                printf("%s%s attacked the enemy! Dealt %d damage!%s\n", red, save->name, dmg, reset);
+
+                sleep(2);
             }
         
         } else if (action == '2') {
-            player_def += 2 * save->level;
-            printf("%sYou are guarding their attack, your defense temporarily increased to %d! %s\n", yellow, player_def, reset);
+            int def_addition = 2 * save->level;
+            player_def += def_addition;
+
+            printf("%s%s guarded themselves! DEF temporarily increased by %d! %s\n", yellow, save->name, def_addition, reset);
             play_sfx("sound/sfx/defend.wav");
+
             sleep(2);
 
         } else if (action == '3') {   
-            printf("%sWhich Skill would you like to deploy?%s\n", blue, reset);
-            printf("1. %sRegen %s(Cost 2 x %d) %s- %sHeals 3 x %d amount of HP%s\n", green, aqua, save->level, reset, green, save->level, reset);
+            printf("%sWhich skill would you like to use?%s\n", blue, reset);
+            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 2, reset, green, 2 * save->level, reset);
         
             char skill;
 
-            printf("I Will use : ");
+            printf("Skill: ");
             scanf(" %c", &skill);
+            clear_input_buffer();
 
             if (skill == '1') {
                 play_sfx("sound/sfx/regen.wav");
               
                 if (player_mana < 2 * save->level) {
-                    printf("%sYou tried to cast the healing but, you do not have enough Mana!%s\n", red, reset);
+                    printf("%sYou tried to cast Regen, but you do not have enough MANA!%s\n", red, reset);
                     sleep(2);
                     continue;
                 }
@@ -198,23 +201,24 @@ int start_combat(struct player *save, int level) {
                 }
                 player_hp += heal_amount;
 
-                printf("%sYou regained %d HP%s\n", green, heal_amount, reset);
+                printf("%s%s cast Regen! Regained %d HP!%s\n", green, save->name, heal_amount, reset);
                 sleep(2);
                 // continue; (Pakai fitur ini kalau misalkan mau ngeheal, cuma gak ngurangin turn)
             } else {
-                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+                printf("%sHero, your choice isn't valid...%s\n", red, reset);
                 sleep(2);
-                clear_screen(); 
+
                 continue;
             }
         } else if (action == '4') {
-            printf("%sIs there any strategy would you like?\n%s", yellow, reset);
-            printf("1. %sFocus %s - %s Restore 2 x %d Mana%s\n",aqua, reset, aqua, save->level, reset);
+            printf("%sIs there any strategy that you would like to use?\n%s", yellow, reset);
+            printf("1. %sFocus %s - %s Restores %d MANA%s\n",aqua, reset, aqua, 2 * save->level, reset);
 
             char other;
 
-            printf("Let's : ");
+            printf("Other: ");
             scanf(" %c", &other);
+            clear_input_buffer();
 
             if (other == '1') {
                 play_sfx("sound/sfx/focus.wav");
@@ -227,22 +231,22 @@ int start_combat(struct player *save, int level) {
 
                 player_mana += mana_amount;
 
-                printf("%sYou regained %d mana%s\n", aqua, mana_amount, reset);
+                printf("%s%s focused! Regained %d MANA%s\n", aqua, save->name, mana_amount, reset);
                 sleep(2);
             } else {
-                printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+                printf("%sHero, your choice isn't valid...%s\n", red, reset);
                 sleep(2);
                 continue; 
             }
         } else {
-            printf("%sHero, Your Choice Isn't Valid..%s\n", red, reset);
+            printf("%sHero, your choice isn't valid...%s\n", red, reset);
             sleep(2);
             continue;
         }
 
         // apakah musuh masih hidup
         if (enemy_hp <= 0) {
-            printf("%sThe enemy has been defeated!%s\n", yellow, reset);
+            printf("%sYou defeated the enemy!%s\n", yellow, reset);
             play_sfx("sound/sfx/enemy-defeated.wav");    
             sleep(2);
             break;
@@ -252,19 +256,18 @@ int start_combat(struct player *save, int level) {
         int dmg = damage(enemy.atk, player_def, 1);
         player_hp -= dmg;
         int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
-        if(crit == 1){
-        printf("%sThe enemy Attacked you, it deals %d damage (CRITICAL HIT) %s\n", red, dmg, reset);
-        play_sfx("sound/sfx/enemy-crit.wav");
-        }else{
-        printf("%sThe enemy Attacked you, it deals %d damage %s\n", red, dmg, reset);
-        play_sfx("sound/sfx/jokowi-kaget.wav");
+
+        if (crit == 1) {
+            printf("%sThe enemy attacked %s! Dealt %d damage! (CRITICAL HIT!)%s\n", red, save->name, dmg, reset);
+            play_sfx("sound/sfx/enemy-crit.wav");
+        } else {
+            printf("%sThe enemy attacked %s! Dealt %d damage!%s\n", red, save->name, dmg, reset);
+            play_sfx("sound/sfx/jokowi-kaget.wav");
         }
 
         sleep(1);
-        clear_screen();
     }
     
-
     clear_screen();
 
     if (player_hp <= 0) {
@@ -277,7 +280,6 @@ int start_combat(struct player *save, int level) {
         return 0;
     } else if (enemy_hp <= 0) {
         play_bgm("sound/bgm/Fontainebleau - A Joyful Moment.wav");
-        sleep(2);
       
         // exp reward
         int exp_reward = level * 3;
@@ -298,8 +300,10 @@ int start_combat(struct player *save, int level) {
 
         // save data
         save_data(save);
+
+        sleep(2);
       
-        printf("%sPress ENTER to continue your adventure.%s\n", green, reset); 
+        printf("%sPress ENTER to continue your adventure%s\n", green, reset); 
         press_enter_key();
         printf("%sContinuing your adventure...%s\n", aqua, reset);
         sleep(2);

@@ -57,3 +57,10 @@ void gotoxy(int x, int y) {
     printf("\033[%d;%dH", y, x);
 #endif
 }
+
+void clear_input_buffer() {
+    int c = getchar();
+    while(c != '\n' && c != EOF) {
+        c = getchar();
+    }
+}

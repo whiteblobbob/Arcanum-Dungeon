@@ -33,47 +33,62 @@ int main() {
 
     // Reset to default color
     const char *reset = "\033[0m";
-    
-    // Code For Menu UI
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|                                                                  |%s\n", purple, reset);
-    printf("%s|%s                        %sArcanum Dungeon!%s                          |%s\n",purple, reset, aqua, purple, reset);
-    printf("%s|                                                                  |%s\n", purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|%s", purple, reset);
-    printf("                          1. %sNew Game                             %s|%s\n", green, purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|%s", purple, reset);
-    printf("                          2. %sLoad FIle                            %s|%s\n", yellow, purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
-    printf("%s|%s", purple, reset);
-    printf("                          3. %sExit                                 %s|%s\n", red, purple, reset);
-    printf("%s====================================================================%s\n", purple, reset);
+
     play_bgm("sound/bgm/Fontainebleau - Just You.wav");
     set_bgm_volume(0.4f);
+
     while (menu == '0') {
-        printf("Menu Selection: ");
+        clear_screen();
+
+        // Code For Menu UI
+        printf("%s====================================================================%s\n", purple, reset);
+        printf("%s|                                                                  |%s\n", purple, reset);
+        printf("%s|%s                        %sArcanum Dungeon!%s                          |%s\n",purple, reset, aqua, purple, reset);
+        printf("%s|                                                                  |%s\n", purple, reset);
+        printf("%s====================================================================%s\n", purple, reset);
+        printf("%s|%s", purple, reset);
+        printf("                          1. %sNew Game                             %s|%s\n", green, purple, reset);
+        printf("%s====================================================================%s\n", purple, reset);
+        printf("%s|%s", purple, reset);
+        printf("                          2. %sLoad FIle                            %s|%s\n", yellow, purple, reset);
+        printf("%s====================================================================%s\n", purple, reset);
+        printf("%s|%s", purple, reset);
+        printf("                          3. %sExit                                 %s|%s\n", red, purple, reset);
+        printf("%s====================================================================%s\n\n", purple, reset);
+
+        printf("Menu: ");
         scanf(" %c", &menu);
+        clear_input_buffer();
 
         if (menu == '1') {
             char name[17];
             struct player save;
 
             printf("%sWelcome to the world of Arcanum, Hero!%s\n", aqua, reset);
+
             sleep(2);
+
             printf("%sWould you please tell us your name?%s\n", aqua, reset);
             printf("Name (Max 16 letters): ");
-            scanf("%16s", name);
-            create_data(&save, name);
 
+            // scanf("%16s", name);
+            fgets(name, sizeof(name), stdin);
+            clear_input_buffer();
+
+            create_data(&save, name);
             save_data(&save);
-            printf("%s%s.. A fitting name for the hero who will save the world..%s\n",aqua ,save.name, reset);
+
+            printf("%s%s... A fitting name for the hero who will save the world..%s\n", aqua, save.name, reset);
+
             sleep(3);
-            printf("%sWell then, let's begin.%s\n",aqua, reset);
+
+            printf("%sWell then, let's begin!%s\n",aqua, reset);
+
             play_sfx("sound/sfx/new-game.wav");
             set_sfx_volume(0.4f);
+
             sleep(2);
-            clear_screen();
+
             enter_dungeon(&save);
         } else if (menu == '2') {
             struct player save;
@@ -88,19 +103,24 @@ int main() {
             printf("%sWelcome back, %s!%s\n", blue, save.name, reset);
 
             sleep(2);
-            printf("%sChecking your journey, wait for a moment!%s\n", yellow, reset);
+
+            printf("%sChecking your adventure log, wait for a moment!%s\n", yellow, reset);
+
             sleep(2);
-            printf("%sSave file reached!%s\n", green, reset);
+
+            printf("%sDone!%s\n", green, reset);
+
             play_sfx("sound/sfx/load.wav");
             set_sfx_volume(0.4f);
-            sleep(2);
-            clear_screen();
-            enter_dungeon(&save);
-  
 
+            sleep(2);
+
+            enter_dungeon(&save);
         } else if (menu == '3') {   
             play_sfx("sound/sfx/exit.wav");
-            printf("%sWe'll wait for your return, Hero!%s\n", yellow, reset);
+
+            printf("%sWe will be waiting for your return, Hero!%s\n", yellow, reset);
+
             sleep(4);
             // exit with error code 0
             return 0;

@@ -4,6 +4,6 @@
 #include "shared.h"
 
 /* fungsi buat masuk combat */
-int start_combat(struct player *save, int level);
+int start_combat(struct player *save, int floor, int boss);
 
 #endif
