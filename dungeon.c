@@ -6,10 +6,8 @@ void enter_dungeon(struct player *save) {
     int victory = 1, floor = 1;
 
     while (victory) {
-        int level = floor * 3 / 2;
-
-        printf("Floor %d\n", floor);
-        victory = start_combat(save, level);
+        printf("FLOOR %d\n\n", floor);
+        victory = start_combat(save, floor, (floor % 5 == 0));
 
         if (victory) {
             floor++;
