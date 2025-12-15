@@ -35,6 +35,8 @@ struct entity {
     int mana;
 };
 
+char combat_log[2][100] = {"", ""};
+
 int damage(int atk, int def, int attacker) {
     // crit or not
     int crit = (rand() % 100 + 1 <= CRIT_CHANCE);
@@ -51,10 +53,20 @@ int damage(int atk, int def, int attacker) {
         dmg += dmg / 2;
     }
 
+    if (attacker == 0) {
+        sprintf(combat_log[0], "You dealt %d damage!\n", dmg);
+    } else {
+        sprintf(combat_log[1], "The enemy dealt %d damage\n\n", dmg);
+    }
+
     return dmg;
 }
 
 int start_combat(struct player *save, int floor, int boss) {
+    // clear combat log
+    sprintf(combat_log[0], "\0");
+    sprintf(combat_log[1], "\0");
+
     // hitung level musuh
     int level = floor * 3 / 2;
 
@@ -127,6 +139,8 @@ int start_combat(struct player *save, int floor, int boss) {
         printf("%s|%s", purple, reset);
         printf("                 3. %sSkill                 %s4. %sOther%s                |%s\n", blue, reset, green, purple, reset);
         printf("%s====================================================================%s\n\n", purple, reset);
+
+        printf("%s%s", combat_log[0], combat_log[1]);
         
         printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player.def);
         printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n", (boss ? "BOSS" : "Enemy"), level, enemy_hp,  enemy.atk, enemy_mana, enemy.def);

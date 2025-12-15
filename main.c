@@ -71,8 +71,8 @@ int main() {
             printf("%sWould you please tell us your name?%s\n", aqua, reset);
             printf("Name (Max 16 letters): ");
 
-            // scanf("%16s", name);
-            fgets(name, sizeof(name), stdin);
+            scanf("%16s", name);
+            // fgets(name, sizeof(name) - 1, stdin);
             clear_input_buffer();
 
             create_data(&save, name);
