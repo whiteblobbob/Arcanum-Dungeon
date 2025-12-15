@@ -182,7 +182,7 @@ int start_combat(struct player *save, int floor, int boss) {
 
         } else if (action == '3') {   
             printf("%sWhich skill would you like to use?%s\n", blue, reset);
-            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 3, reset, green, 2 * save->level, reset);
+            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 2, reset, green, 3 * save->level, reset);
         
             char skill;
 
@@ -217,7 +217,7 @@ int start_combat(struct player *save, int floor, int boss) {
 
                 printf("%s%s cast Regen! Regained %d HP!%s\n", green, save->name, heal_amount, reset);
                 sleep(2);
-                // continue; (Pakai fitur ini kalau misalkan mau ngeheal, cuma gak ngurangin turn)
+                continue; 
             } else {
                 printf("%sHero, your choice isn't valid...%s\n", red, reset);
                 sleep(2);
