@@ -168,7 +168,7 @@ int start_combat(struct player *save, int floor, int boss) {
 
         } else if (action == '3') {   
             printf("%sWhich skill would you like to use?%s\n", blue, reset);
-            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 2, reset, green, 2 * save->level, reset);
+            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 3, reset, green, 2 * save->level, reset);
         
             char skill;
 
