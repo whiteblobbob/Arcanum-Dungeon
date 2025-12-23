@@ -90,6 +90,10 @@ int start_combat(struct player *save, int floor, int boss) {
     enemy.def = level + (rand() % 6);
     enemy.mana = (level * 2) + (rand() % 8);
 
+    //status effect
+    int armor_break_turn = 0;
+    int armor_buff_turn = 0;
+
     // temp stats
     int player_hp = player.hp;
     int player_def = player.def;
@@ -122,8 +126,26 @@ int start_combat(struct player *save, int floor, int boss) {
         clear_screen();
 
         // reset def
-        player_def = player.def;
-        enemy_def = enemy.def;
+
+        if (armor_buff_turn > 0)
+        {
+            armor_buff_turn--;
+            if (armor_buff_turn == 0)
+            {
+                player_def = player.def;
+            }
+            
+        }
+
+        // armor break turn countdown
+
+        if(armor_break_turn > 0){
+            armor_break_turn--;
+            if (armor_break_turn == 0){
+            enemy_def = enemy.def;}
+        }
+
+        
 
         char action = '0';
 
@@ -142,8 +164,10 @@ int start_combat(struct player *save, int floor, int boss) {
 
         printf("%s%s", combat_log[0], combat_log[1]);
         
-        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player.def);
-        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n", (boss ? "BOSS" : "Enemy"), level, enemy_hp,  enemy.atk, enemy_mana, enemy.def);
+        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n",save->name, save->level, player_hp, player.atk, player_mana, player_def);
+        printf("%s | Lv. %d | %d HP  |  %d ATK  |  %d MANA  |  %d DEF\n\n", (boss ? "BOSS" : "Enemy"), level, enemy_hp,  enemy.atk, enemy_mana, enemy_def);
+        printf("Enemy Armor Break : %d        |", armor_break_turn);
+        printf("Your Armor Buff  : %d\n", armor_buff_turn);
 
         printf("Action: ");
         scanf(" %c", &action);
@@ -172,17 +196,31 @@ int start_combat(struct player *save, int floor, int boss) {
             }
         
         } else if (action == '2') {
+
+
+            if (armor_buff_turn > 0)
+            {
+                printf("%sYour DEF buff is still active (%d turns left)%s\n", yellow, armor_buff_turn, reset);
+                armor_buff_turn++;
+                armor_break_turn++;
+                sleep(2);
+                continue;  
+            }
+
             int def_addition = 2 * save->level;
             player_def += def_addition;
-
             printf("%s%s guarded themselves! DEF temporarily increased by %d! %s\n", yellow, save->name, def_addition, reset);
             play_sfx("sound/sfx/defend.wav");
-
             sleep(2);
+            armor_buff_turn = 3;
+            armor_buff_turn++;
 
         } else if (action == '3') {   
             printf("%sWhich skill would you like to use?%s\n", blue, reset);
-            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 3, reset, green, 2 * save->level, reset);
+            printf("1. %sRegen %s(Cost %d) %s- %sRegenerates %d HP%s\n", green, aqua, save->level * 2, reset, green, 3 * save->level, reset);
+            if (save->level >= 2){
+                printf("2. %sArmor Break %s(Cost %d) %s- %sBreak enemy armor by %d %s\n", yellow, aqua, save->level * 3, reset, yellow, enemy_def / 2, reset);
+            }
         
             char skill;
 
@@ -196,6 +234,8 @@ int start_combat(struct player *save, int floor, int boss) {
                 if (player_mana < 2 * save->level) {
                     printf("%sYou tried to cast Regen, but you do not have enough MANA!%s\n", red, reset);
                     sleep(2);
+                    armor_buff_turn++;
+                    armor_break_turn++;
                     continue;
                 }
 
@@ -203,6 +243,8 @@ int start_combat(struct player *save, int floor, int boss) {
                 if (player_hp >= player.hp) {
                     printf("%sYour HP is already full!%s\n", green, reset);
                     sleep(2);
+                    armor_buff_turn++;
+                    armor_break_turn++;
                     continue;
                 }
 
@@ -217,11 +259,45 @@ int start_combat(struct player *save, int floor, int boss) {
 
                 printf("%s%s cast Regen! Regained %d HP!%s\n", green, save->name, heal_amount, reset);
                 sleep(2);
-                // continue; (Pakai fitur ini kalau misalkan mau ngeheal, cuma gak ngurangin turn)
-            } else {
+                armor_buff_turn++;
+                armor_break_turn++;
+                continue;
+            }
+            else if(save->level >= 2 && skill == '2'){
+
+                if (player_mana < 1 * save->level) {
+                    printf("%sYou tried to cast Armor Break, but you do not have enough MANA!%s\n", red, reset);
+                    sleep(2);
+                    armor_buff_turn++;
+                    armor_break_turn++;
+                    continue;
+
+                }else if(armor_break_turn > 0){
+                    printf("%sArmor Break is still active!%s\n", red, reset);
+                    sleep(2);
+                    armor_buff_turn++;
+                    armor_break_turn++;
+                    continue;
+                }
+
+                player_mana -= 1 * save->level;
+                int armorbreak = 2;
+                enemy_def = enemy_def / armorbreak;
+                if (enemy_def <= 0) enemy_def = 1;
+                armor_break_turn =+ 2;
+                printf("%s%s cast Armor Break! Enemy armor reduced by %d!%s\n", yellow, save->name, save->level, reset);
+                armor_buff_turn++;
+                armor_break_turn++;
+                sleep(2);
+                continue;
+
+            } 
+
+            else {
                 printf("%sHero, your choice isn't valid...%s\n", red, reset);
                 sleep(2);
-
+                armor_buff_turn++;
+                armor_break_turn++;
                 continue;
             }
         } else if (action == '4') {
@@ -246,15 +322,18 @@ int start_combat(struct player *save, int floor, int boss) {
                 player_mana += mana_amount;
 
                 printf("%s%s focused! Regained %d MANA%s\n", aqua, save->name, mana_amount, reset);
-                sleep(2);
             } else {
                 printf("%sHero, your choice isn't valid...%s\n", red, reset);
                 sleep(2);
+                armor_buff_turn++;
+                armor_break_turn++;
                 continue; 
             }
         } else {
             printf("%sHero, your choice isn't valid...%s\n", red, reset);
             sleep(2);
+            armor_buff_turn++;
+            armor_break_turn++;
             continue;
         }
 
